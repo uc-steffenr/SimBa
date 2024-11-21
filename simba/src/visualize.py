@@ -5,7 +5,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.animation import FuncAnimation
 import os
 
-from agent import Agent
+from .agent import Agent
 
 
 def plot_states(t : np.ndarray,

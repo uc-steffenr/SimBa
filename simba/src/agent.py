@@ -1,7 +1,7 @@
 """Defines agent class for roomba."""
 import numpy as np
 from shapely import Polygon, LineString, intersection
-from _controls import controls
+from ._controls import controls
 
 
 class Agent:

@@ -3,9 +3,9 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from shapely import Polygon, LinearRing, Point
 
-from agent import Agent
-from dynamics import plant
-from utils import generate_verts
+from .agent import Agent
+from .dynamics import plant
+from .utils import generate_verts
 
 
 class Environment:
