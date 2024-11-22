@@ -1,7 +1,7 @@
 """Test Simulation methods."""
 import numpy as np
 
-from simba import Agent, Simulation
+from simba import Agent, Simulation, timing
 
 
 def test_instantiation():
@@ -49,6 +49,22 @@ def test_run_simulation():
     print('Simulation ran successfully!')
 
 
+def test_run_parallel_simulation():
+    agent = Agent()
+    n_conditions = 50
+    sim = Simulation(agent, n_conditions)
+
+    metrics, _ = timing(sim.run_parallel_simulations)()
+
+    assert 'collision_count' in metrics
+    assert 'heading_count' in metrics
+    assert 'total_time' in metrics
+    assert 'status' in metrics
+    assert len(metrics['collision_count']) == n_conditions
+    print('Parallel simulation ran successfully!')
+
+
 if __name__ == '__main__':
     test_instantiation()
     test_run_simulation()
+    test_run_parallel_simulation()
