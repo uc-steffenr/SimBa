@@ -125,7 +125,22 @@ class Environment:
         self.X0 = np.array([x0, xdot0, y0, ydot0, theta0, thetadot0])
         self.target = np.array([xt, yt])
 
-    def dynamics(self, t, X):
+    def dynamics(self, t : float, X : np.ndarray) -> np.ndarray:
+        """Calculates the time derivative of states while accounting for
+        collisions and computing controls.
+
+        Parameters
+        ----------
+        t : float
+            Current timestep.
+        X : np.ndarray
+            Current state.
+
+        Returns
+        -------
+        np.ndarray
+            Time derivative of states.
+        """
         verts = self.agent.verts + np.array([X[0], X[2]])[:, np.newaxis]
         agent_poly = Polygon(verts.T)
         collision_check = any([agent_poly.distance(obst) <= \
@@ -141,7 +156,21 @@ class Environment:
         return plant(t, X, u, self.agent.m, self.agent.r, self.agent.kd,
                      self.agent.kn)
 
-    def collision_event(self, t, X):
+    def collision_event(self, t : float, X : np.ndarray) -> float:
+        """Event to count number of collisions.
+
+        Parameters
+        ----------
+        t : float
+            Current timestep.
+        X : np.ndarray
+            Current state.
+
+        Returns
+        -------
+        float
+            Difference between minimum distance and threshold.
+        """
         verts = self.agent.verts + np.array([X[0], X[2]])[:, np.newaxis]
         agent_poly = Polygon(verts.T)
         dist = np.min(np.array([agent_poly.distance(obst) for obst in \
@@ -149,7 +178,21 @@ class Environment:
 
         return dist - self.agent._collision_thresh
 
-    def target_event(self, t, X):
+    def target_event(self, t : float, X : np.ndarray) -> float:
+        """Terminating event for reaching the target.
+
+        Parameters
+        ----------
+        t : float
+            Current timestep.
+        X : np.ndarray
+            Current state.
+
+        Returns
+        -------
+        float
+            Difference between distance to target and threshold.
+        """
         dist = np.sqrt((self.target[0] - X[0])**2 + (self.target[1] - X[2])**2)
         return dist - self.target_thresh
 
