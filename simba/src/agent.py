@@ -157,7 +157,8 @@ class Agent:
 
         # enforce f_max
         # TODO: come back and see if it's possible to just use one value
-        u = np.min([np.abs(u), np.ones_like(u)*self.f_max], axis=0)
+        u = np.min([u, np.ones_like(u)*self.f_max], axis=0)
+        u = np.max([u, np.ones_like(u)*-self.f_max], axis=0)
 
         return u
 
@@ -176,12 +177,3 @@ class Agent:
         """
         self.reset_collision_count()
         self.reset_heading_count()
-
-
-# if __name__ == '__main__':
-#     agent = Agent(offset=0.)
-#     line = [(2.5, 2.5), (-1., 1.)]
-#     l = LineString(line)
-#     X = np.zeros(6)
-#     print(agent.controls(0., X, np.ones(2), [l]))
-#     print(agent.heading_count)
