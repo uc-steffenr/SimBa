@@ -1,6 +1,7 @@
 """Defines tools for SimBa simulation."""
 import numpy as np
-from shapely import Polygon, LineString, LinearRing, intersection
+from shapely import Polygon
+from time import perf_counter
 
 
 def R(ang : float) -> np.ndarray:
@@ -68,7 +69,7 @@ def generate_verts(k : int,
         yc = np.random.uniform(low=border_bounds[1][0],
                             high=border_bounds[1][1])
         verts = np.vstack((xc + r*np.cos(alpha), yc + r*np.sin(alpha))).T
-        if k > 1:
+        if k > 2:
             verts = verts @ R(ang)
 
         border_bound_check = np.all(verts[:, 0] > border_bounds[0][0]) and \
@@ -87,3 +88,21 @@ def generate_verts(k : int,
             break
 
     return verts
+
+
+def timing(func):
+    """Times specified function evaluation.
+
+    Parameters
+    ----------
+    func : callable
+        Wrapped function with timing.
+    """
+    def wrapper(*args, **kwargs):
+        t0 = perf_counter()
+        result = func(*args, **kwargs)
+        dt = perf_counter() - t0
+        print(f'{func.__name__} took {dt} seconds')
+        return result, dt
+
+    return wrapper

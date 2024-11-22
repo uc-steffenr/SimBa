@@ -229,18 +229,3 @@ class Environment:
         self.rng = np.random.default_rng(self.seed)
 
 Environment.target_event.terminal = True
-
-
-# if __name__ == '__main__':
-#     agent = Agent()
-#     env = Environment(agent, num_obstacles=4)
-#     metrics, t, y = env.evaluate(t_eval=np.linspace(0., env.t_dur, 100))
-#     print(env.X0)
-#     print(env.target)
-#     print(metrics)
-
-#     from visualize import plot_states, animate, plot_sensor_readings
-
-#     plot_states(t, y)
-#     animate(t, y, agent, env.target, env.verts, env.bounds, interval=100)
-#     plot_sensor_readings(agent)
