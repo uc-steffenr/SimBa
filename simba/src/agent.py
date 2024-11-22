@@ -144,7 +144,10 @@ class Agent:
         np.ndarray
             Left and right wheel forces.
         """
-        readings = self.sensor_reading(X, obstacles)
+        if len(obstacles) > 0:
+            readings = self.sensor_reading(X, obstacles)
+        else:
+            readings = np.ones(self.num_sensors)*self.sensor_dist
 
         if np.any(readings < self._collision_thresh):
             self.collision_count += 1
