@@ -1,4 +1,4 @@
-"""Defines tools for RoomSim simulation."""
+"""Defines tools for SimBa simulation."""
 import numpy as np
 from shapely import Polygon, LineString, LinearRing, intersection
 

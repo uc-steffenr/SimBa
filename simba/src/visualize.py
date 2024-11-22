@@ -14,20 +14,20 @@ def plot_states(t : np.ndarray,
                 show : bool=False,
                 save_dir : str=os.path.abspath('')
                 ) -> None:
-    """_summary_
+    """Plots states of simulation.
 
     Parameters
     ----------
     t : np.ndarray
-        _description_
+        Time steps for simulation.
     y : np.ndarray
-        _description_
+        States for simulation.
     save : bool, optional
-        _description_, by default True
+        Flag to determine whether to save the plot, by default True.
     show : bool, optional
-        _description_, by default False
+        Flag to determine whether to show the plot, by default False.
     save_dir : str, optional
-        _description_, by default os.path.abspath('')
+        Directory to save results to, by default os.path.abspath('').
     """
     names = ['x (m)', 'xdot (m/s)', 'y (m)', 'ydot (m/s)', 'theta (deg)',
              'thetadot (deg/s)']
@@ -59,28 +59,28 @@ def animate(t : np.ndarray,
             save_dir : str=os.path.abspath(''),
             **func_animate_kwargs
             ) -> None:
-    """_summary_
+    """Animates simulation.
 
     Parameters
     ----------
     t : np.ndarray
-        _description_
+        Time steps of simulation.
     X : np.ndarray
-        _description_
+        States of simulation.
     agent : Agent
-        _description_
+        Agent that traverses the environment.
     target : np.ndarray
-        _description_
+        Target the agent tries to get to.
     obst_verts : np.ndarray
-        _description_
+        Vertices of the obstacles.
     bounds : list[tuple[float]]
-        _description_
+        Bounds of the simulation environment.
     save : bool, optional
-        _description_, by default True
+        Flag to determine whether to save the results, by default True.
     show : bool, optional
-        _description_, by default False
+        Flag to determine whether to show the results, by default False.
     save_dir : str, optional
-        _description_, by default os.path.abspath('')
+        Directory to save results to, by default os.path.abspath('').
     """
     xrange = (bounds[0][0]-1, bounds[0][1]+1)
     yrange = (bounds[1][0]-1, bounds[0][1]+1)
@@ -158,18 +158,18 @@ def plot_sensor_readings(agent : Agent,
                          show : bool=False,
                          save_dir : str=os.path.abspath('')
                          ) -> None:
-    """_summary_
+    """Plots sensor readings for every timestep.
 
     Parameters
     ----------
     agent : Agent
-        _description_
+        Agent that traverses the environment.
     save : bool, optional
-        _description_, by default True
+        Flag to determine whether to save the results, by default True.
     show : bool, optional
-        _description_, by default False
+        Flag to determine whether to show the results, by default False.
     save_dir : str, optional
-        _description_, by default os.path.abspath('')
+        Directory to save results to, by default os.path.abspath('').
     """
     # TODO: make this use closest multipliers for row and col
     fig, ax = plt.subplots(1, agent.num_sensors)

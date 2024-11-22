@@ -69,13 +69,6 @@ class Agent:
 
         self.angs = 2.*np.pi*(np.arange(self.num_sensors)/self.num_sensors) + \
                     self.offset
-
-        # sensor_radius_line = np.array([
-        #     [self.r, self.r],
-        #     [self.r + self.sensor_dist, self.r + self.sensor_dist]
-        # ])
-        # self.sensor_radius = np.array([sensor_radius_line \
-        #                                for _ in range(self.num_sensors)])
         
         self.sensor_readings = []
 
@@ -99,12 +92,6 @@ class Agent:
         """
         # calculate sensor lines at current state
         angs = self.angs + X[4]
-        # FIXME: Reverting back to original formulation since new
-        # attempt didn't work. Find a way to do this better
-        # sensor_verts = self.sensor_radius * np.ones_like(self.sensor_radius) * \
-        #                np.array([[np.cos(angs), np.sin(angs)],
-        #                          [np.cos(angs), np.sin(angs)]]).T
-        # sensor_verts += np.ones_like(sensor_verts)*np.array([X[0], X[2]])
         sensor_verts = np.array([[X[0] + self.r*np.cos(angs),
                                   X[2] + self. r*np.sin(angs)],
                                  [X[0] + (self.r+self.sensor_dist)*np.cos(angs),

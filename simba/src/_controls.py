@@ -1,4 +1,4 @@
-"""Defines temporary controls for system."""
+"""Defines dummy controls for system."""
 import numpy as np
 
 
