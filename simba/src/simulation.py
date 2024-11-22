@@ -1,8 +1,15 @@
 """Defines simulation class to obtain metrics over multiple runs."""
 import numpy as np
+from multiprocessing import Pool
 
 from .agent import Agent
 from .environment import Environment
+
+
+def evaluate_env(args):
+    env, solve_ivp_kwargs = args
+    met, _, _ = env.evaluate(**solve_ivp_kwargs)
+    return met
 
 
 class Simulation:
@@ -52,9 +59,6 @@ class Simulation:
                      for i in range(n_conditions)]
 
 
-    # NOTE: for now this will be a for loop, but I want to look at 
-    # vectorization and parallelization of this. Will check performance
-    # with just for loop first though
     def run_simulation(self, **solve_ivp_kwargs) -> dict[np.ndarray]:
         """Runs specified number of simulations and returns metrics.
 
@@ -89,6 +93,47 @@ class Simulation:
             metrics['status'][i] = met['status']
 
         return metrics
+
+
+    def run_parallel_simulations(self, **solve_ivp_kwargs) -> dict[np.ndarray]:
+        """Parallel version of run_simulation.
+
+        Returns
+        -------
+        dict[np.ndarray]
+            Dictionary of results. Keys are:
+                - collision_count
+                    Number of collisions picked up by sensors.
+                - heading_count
+                    Number of timesteps where agent heading to target is
+                    outside of the specified threshold.
+                - total_time
+                    Time spent for each environment evaluation.
+                - status
+                    Termination status of integrator (-1 for failed
+                    integration, 0 for reaching final time, and 1 for
+                    achieving the termination event, i.e. reaching the
+                    target). See scipy.integrate.solve_ivp docs for more
+                    information.
+        """
+        metrics = dict(collision_count=np.zeros(self.N),
+                       heading_count=np.zeros(self.N),
+                       total_time=np.zeros(self.N),
+                       status=np.zeros(self.N))
+
+        args = [(env, solve_ivp_kwargs) for env in self.envs]
+
+        with Pool() as pool:
+            results = pool.map(evaluate_env, args)
+
+        for i, met in enumerate(results):
+            metrics['collision_count'][i] = met['collision_count']
+            metrics['heading_count'][i] = met['heading_count']
+            metrics['total_time'][i] = met['total_time']
+            metrics['status'][i] = met['status']
+
+        return metrics
+
 
     def reset(self) -> None:
         """Resets RNG for Simulation and for environments.
