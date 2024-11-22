@@ -25,6 +25,7 @@ states are:
 $$\bf{X} = [x, \dot{x}, y, \dot{y}, \vartheta, \dot{\vartheta}]$$
 
 The controls are:
+
 $$\bf{u} = [F_{left}, F_{right}]$$
 
 Robotic agent properties are specified in the `Agent` class.
