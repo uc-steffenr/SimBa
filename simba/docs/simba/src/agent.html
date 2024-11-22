@@ -458,6 +458,7 @@
 </span><span id="Agent-150"><a href="#Agent-150"><span class="linenos">150</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="Agent-151"><a href="#Agent-151"><span class="linenos">151</span></a>            <span class="n">readings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sensors</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sensor_dist</span>
 </span><span id="Agent-152"><a href="#Agent-152"><span class="linenos">152</span></a>
+
 </span><span id="Agent-153"><a href="#Agent-153"><span class="linenos">153</span></a>        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">readings</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collision_thresh</span><span class="p">):</span>
 </span><span id="Agent-154"><a href="#Agent-154"><span class="linenos">154</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">collision_count</span> <span class="o">+=</span> <span class="mi">1</span>
 </span><span id="Agent-155"><a href="#Agent-155"><span class="linenos">155</span></a>
@@ -935,7 +936,6 @@ List of obstacles in environment.</li>
 </span><span id="Agent.reset_collision_count-170"><a href="#Agent.reset_collision_count-170"><span class="linenos">170</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets collision metric count.</span>
 </span><span id="Agent.reset_collision_count-171"><a href="#Agent.reset_collision_count-171"><span class="linenos">171</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Agent.reset_collision_count-172"><a href="#Agent.reset_collision_count-172"><span class="linenos">172</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">collision_count</span> <span class="o">=</span> <span class="mi">0</span>
-</span></pre></div>
 
 
             <div class="docstring"><p>Resets collision metric count.</p>
@@ -982,7 +982,6 @@ List of obstacles in environment.</li>
 </span><span id="Agent.reset-181"><a href="#Agent.reset-181"><span class="linenos">181</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Agent.reset-182"><a href="#Agent.reset-182"><span class="linenos">182</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reset_collision_count</span><span class="p">()</span>
 </span><span id="Agent.reset-183"><a href="#Agent.reset-183"><span class="linenos">183</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reset_heading_count</span><span class="p">()</span>
-</span></pre></div>
 
 
             <div class="docstring"><p>Resets metrics.</p>
