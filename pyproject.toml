@@ -7,7 +7,7 @@ name = "simba"
 dynamic = ["version"]
 description = "Roomba dynamics and environment simulator"
 readme = "README.md"
-requires-python = ">=3.10.13"
+requires-python = ">=3.10.8"
 
 
 [tool.hatch.version]

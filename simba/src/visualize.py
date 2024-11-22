@@ -91,11 +91,6 @@ def animate(t : np.ndarray,
     
     fig, ax = plt.subplots(1, 1, subplot_kw={'aspect': 'equal'})
 
-    # print(agent.verts[0, :])
-    # print(agent.angs)
-    # print(x, y)
-    # exit()
-
     body = ax.fill(x+agent.verts[0, :],
                    y+agent.verts[1, :],
                    facecolor='silver',
@@ -107,23 +102,6 @@ def animate(t : np.ndarray,
                  linewidth=1)[0]
     trace = ax.plot([x], [y], '--')[0]
 
-    # angs = agent.angs + theta
-    # sensor_verts = np.zeros_like(agent.sensor_radius)
-    # sensor_verts[:, 0, :] = agent.sensor_radius[:, :, 0] * np.cos(angs[:, np.newaxis])
-    # sensor_verts[:, 1, :] = agent.sensor_radius[:, :, 1] * np.sin(angs[:, np.newaxis])
-    # sensor_verts[:, 0, :] += x 
-    # sensor_verts[:, 1, :] += y
-    # R = np.array([[np.cos(angs), np.sin(angs)], [np.cos(angs), np.sin(angs)]])
-    # T = np.array([x, y])
-    # sensor_verts = agent.sensor_radius*R.transpose(2, 0, 1) + T
-    # sensor_verts = agent.sensor_radius * np.ones_like(agent.sensor_radius) * \
-    #                np.array([[np.cos(angs), np.sin(angs)],
-    #                          [np.cos(angs), np.sin(angs)]]).T
-    # sensor_verts += np.ones_like(sensor_verts)*np.array([x, y])
-    # sens = [ax.plot(sen[0, :], sen[1, :])[0] for sen in sensor_verts]
-
-    # FIXME: this is hella ugly and borderline unreadable, tried
-    # to fix with the comments above this but to no avail
     angs = 2.*np.pi*(np.arange(agent.num_sensors)/agent.num_sensors) + \
            agent.offset + theta
     sensors = np.array([[(x+agent.r*np.cos(angs)), 
@@ -154,37 +132,20 @@ def animate(t : np.ndarray,
         body.set_xy(np.array([x+agent.verts[0, :], y+agent.verts[1, :]]).T)
         ln.set_data([x, x+agent.r*np.cos(theta)], [y, y+agent.r*np.sin(theta)])
         trace.set_data(X[0, :i], X[2, :i])
-        
-        # FIXME: this is hella ugly and borderline unreadable, tried
-        # to fix with the comments below this but to no avail
+
         angs = 2.*np.pi*(np.arange(agent.num_sensors)/agent.num_sensors) + \
             agent.offset + theta
         sensors = np.array([[(x+agent.r*np.cos(angs)), 
-                            (x+(agent.r+agent.sensor_dist)*np.cos(angs))],
+                             (x+(agent.r+agent.sensor_dist)*np.cos(angs))],
                             [(y+agent.r*np.sin(angs)), 
-                            (y+(agent.r+agent.sensor_dist)*np.sin(angs))]]
-                        ).transpose(2, 0, 1)
+                             (y+(agent.r+agent.sensor_dist)*np.sin(angs))]]
+                          ).transpose(2, 0, 1)
     
         [sen.set_data(sensors[j, 0, :], sensors[j, 1, :]) \
                       for j, sen in enumerate(sens)]
-        
-        # angs = agent.angs + theta
-        # sensor_verts = agent.sensor_radius * np.ones_like(agent.sensor_radius) * \
-        #                 np.array([[np.cos(angs), np.sin(angs)],
-        #                           [np.cos(angs), np.sin(angs)]]).T
-        # sensor_verts += np.ones_like(sensor_verts)*np.array([x, y])
-        # angs = agent.angs + theta
-        # R = np.array([[np.cos(angs), np.sin(angs)], [np.cos(angs), np.sin(angs)]])
-        # T = np.array([x, y])
-        # sensor_verts = agent.sensor_radius*R.transpose(2, 0, 1) + T
-        # sensor_verts[:, 0, :] = agent.sensor_radius[:, :, 0] * np.cos(angs[:, np.newaxis])
-        # sensor_verts[:, 1, :] = agent.sensor_radius[:, :, 1] * np.sin(angs[:, np.newaxis])
-        # sensor_verts[:, 0, :] += x 
-        # sensor_verts[:, 1, :] += y
 
-        # [sen.set_data(sensor_verts[j, :, 0], sensor_verts[j, :, 0]) for j, sen in enumerate(sens)]
-
-    ani = FuncAnimation(fig, update, frames=len(t), blit=False, **func_animate_kwargs)
+    ani = FuncAnimation(fig, update, frames=len(t), blit=False,
+                        **func_animate_kwargs)
 
     if show:
         plt.show()

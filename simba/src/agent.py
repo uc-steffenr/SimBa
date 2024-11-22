@@ -70,12 +70,12 @@ class Agent:
         self.angs = 2.*np.pi*(np.arange(self.num_sensors)/self.num_sensors) + \
                     self.offset
 
-        sensor_radius_line = np.array([
-            [self.r, self.r],
-            [self.r + self.sensor_dist, self.r + self.sensor_dist]
-        ])
-        self.sensor_radius = np.array([sensor_radius_line \
-                                       for _ in range(self.num_sensors)])
+        # sensor_radius_line = np.array([
+        #     [self.r, self.r],
+        #     [self.r + self.sensor_dist, self.r + self.sensor_dist]
+        # ])
+        # self.sensor_radius = np.array([sensor_radius_line \
+        #                                for _ in range(self.num_sensors)])
         
         self.sensor_readings = []
 
@@ -107,8 +107,7 @@ class Agent:
         # sensor_verts += np.ones_like(sensor_verts)*np.array([X[0], X[2]])
         sensor_verts = np.array([[X[0] + self.r*np.cos(angs),
                                   X[2] + self. r*np.sin(angs)],
-                                 [X[0] + \
-                                     (self.r+self.sensor_dist)*np.cos(angs),
+                                 [X[0] + (self.r+self.sensor_dist)*np.cos(angs),
                                   X[2] + (self.r+self.sensor_dist)*np.sin(angs)
                                   ]]).transpose(2, 0, 1)
 
