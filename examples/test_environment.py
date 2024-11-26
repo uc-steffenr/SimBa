@@ -61,7 +61,7 @@ def test_instantiation():
 def test_evaluate():
     agent = Agent()
     env = Environment(agent)
-    metrics, t, y = env.evaluate(t_eval=np.linspace(0., 18., 100))
+    metrics, t, y, _ = env.evaluate(t_eval=np.linspace(0., 18., 100))
 
     assert len(t) == 100
     print('Evaluate method works!')
