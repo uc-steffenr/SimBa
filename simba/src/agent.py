@@ -71,6 +71,7 @@ class Agent:
                     self.offset
         
         self.sensor_readings = []
+        self.control_actions = []
 
     def sensor_reading(self,
                        X : np.ndarray,
@@ -175,8 +176,20 @@ class Agent:
         """
         self.heading_count = 0
 
+    def reset_sensor_readings(self):
+        """Resets sensor readings list.
+        """
+        self.sensor_readings = []
+
+    def reset_control_actions(self):
+        """Resets control actions list.
+        """
+        self.control_actions = []
+
     def reset(self):
         """Resets metrics.
         """
         self.reset_collision_count()
         self.reset_heading_count()
+        self.reset_sensor_readings()
+        self.reset_control_actions()

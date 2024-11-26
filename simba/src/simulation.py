@@ -8,8 +8,8 @@ from .environment import Environment
 
 def evaluate_env(args):
     env, solve_ivp_kwargs = args
-    met, _, _ = env.evaluate(**solve_ivp_kwargs)
-    return met
+    met, ts, ys, us = env.evaluate(**solve_ivp_kwargs)
+    return met, ts, ys, us
 
 
 class Simulation:
@@ -83,14 +83,18 @@ class Simulation:
         metrics = dict(collision_count=np.zeros(self.N),
                        heading_count=np.zeros(self.N),
                        total_time=np.zeros(self.N),
-                       status=np.zeros(self.N))
+                       status=np.zeros(self.N),
+                       states=[],
+                       controls=[])
 
         for i, env in enumerate(self.envs):
-            met, _, _ = env.evaluate(**solve_ivp_kwargs)
+            met, _, y, u = env.evaluate(**solve_ivp_kwargs)
             metrics['collision_count'][i] = met['collision_count']
             metrics['heading_count'][i] = met['heading_count']
             metrics['total_time'][i] = met['total_time']
             metrics['status'][i] = met['status']
+            metrics['states'].append(y)
+            metrics['controls'].append(u)
 
         return metrics
 
@@ -119,7 +123,9 @@ class Simulation:
         metrics = dict(collision_count=np.zeros(self.N),
                        heading_count=np.zeros(self.N),
                        total_time=np.zeros(self.N),
-                       status=np.zeros(self.N))
+                       status=np.zeros(self.N),
+                       states=[],
+                       controls=[])
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
@@ -127,10 +133,12 @@ class Simulation:
             results = pool.map(evaluate_env, args)
 
         for i, met in enumerate(results):
-            metrics['collision_count'][i] = met['collision_count']
-            metrics['heading_count'][i] = met['heading_count']
-            metrics['total_time'][i] = met['total_time']
-            metrics['status'][i] = met['status']
+            metrics['collision_count'][i] = met[0]['collision_count']
+            metrics['heading_count'][i] = met[0]['heading_count']
+            metrics['total_time'][i] = met[0]['total_time']
+            metrics['status'][i] = met[0]['status']
+            metrics['states'].append(met[2])
+            metrics['controls'].append(met[3])
 
         return metrics
 

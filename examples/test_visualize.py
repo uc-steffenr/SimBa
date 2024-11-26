@@ -28,12 +28,14 @@ def test_animate():
     agent = Agent()
     env = Environment(agent)
     _, t, y = env.evaluate(t_eval=np.linspace(0., 18., 100))
-    
-    animate(t, y, agent, env.target, env.verts, env.bounds, save=False,
-            show=True)
+
+    plot_states(t, y, save=True, show=False)
+    plot_sensor_readings(agent, save=True, show=False)
+    animate(t, y, agent, env.target, env.verts, env.bounds, save=True,
+            show=False)
 
 
 if __name__ == '__main__':
-    test_plot_states()
-    test_plot_sensor_readings()
+    # test_plot_states()
+    # test_plot_sensor_readings()
     test_animate()

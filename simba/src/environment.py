@@ -221,7 +221,7 @@ class Environment:
         metrics['total_time'] = sol.t[-1]
         metrics['status'] = sol.status
 
-        return metrics, sol.t, sol.y
+        return metrics, sol.t, sol.y, self.agent.control_actions
 
     def reset_rng(self):
         """Resets the RNG for the environment.

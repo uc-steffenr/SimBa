@@ -1,6 +1,4 @@
 """Test Simulation methods."""
-import numpy as np
-
 from simba import Agent, Simulation, timing
 
 
