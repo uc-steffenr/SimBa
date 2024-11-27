@@ -17,7 +17,7 @@ def test_plot_states():
 
 
 def test_plot_sensor_readings():
-    agent = Agent()
+    agent = Agent(track_readings=True)
     env = Environment(agent)
     _, t, y, _ = env.evaluate(t_eval=np.linspace(0., 18., 100))
 

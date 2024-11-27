@@ -70,6 +70,8 @@ class Environment:
                                      [bounds[0][1], bounds[1][1]],
                                      [bounds[0][0], bounds[1][1]]])
 
+        self._generate_environment()
+
     # will generate roomba position and target
     def _generate_environment(self):
         self.obstacles = []
@@ -205,7 +207,6 @@ class Environment:
             Metrics, time steps, and states.
         """
         self.agent.reset()
-        self._generate_environment()
 
         metrics = dict(collision_count=None,
                        heading_count=None,

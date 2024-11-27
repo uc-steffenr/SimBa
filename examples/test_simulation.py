@@ -24,9 +24,9 @@ def test_instantiation():
                      n_conditions,
                      n_obstacles,
                      sim_seed,
-                     n_proc
+                     n_proc,
                      **env_kwargs)
-    
+
     assert sim.agent == agent
     assert sim.N == n_conditions
     assert sim.n_obstacles == n_obstacles
@@ -53,7 +53,7 @@ def test_run_simulation():
 def test_run_parallel_simulation():
     agent = Agent()
     n_conditions = 50
-    sim = Simulation(agent, n_conditions, n_proc=12)
+    sim = Simulation(agent, n_conditions, n_proc=5)
 
     metrics, _ = timing(sim.run_parallel_simulations)()
 

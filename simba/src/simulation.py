@@ -19,6 +19,7 @@ class Simulation:
                  n_obstacles : tuple[int]=(2,5),
                  sim_seed : int=12345,
                  n_proc : int=1,
+                 track_states : bool=False,
                  **environment_kwargs
                  ) -> None:
         """Instantiates simulation class for multiple sim evaluation.
@@ -35,12 +36,18 @@ class Simulation:
         sim_seed : int, optional
             Seed for simulation to set environment seeds, by
             default 12345.
+        n_proc : int, optional
+            Number of processors to run tasks in parallel, by default 1.
+        track_states : bool, optional
+            Whether or not to return states of each run as a metric, by
+            default False.
         """
         self.agent = agent
         self.N = n_conditions
         self.n_obstacles = n_obstacles
         self.seed = sim_seed
         self.n_proc = n_proc
+        self.track_states = track_states
 
         self.rng = np.random.default_rng(sim_seed)
         env_seeds = self.rng.integers(low=10_000, high=60_000,
@@ -95,8 +102,10 @@ class Simulation:
             metrics['heading_count'][i] = met['heading_count']
             metrics['total_time'][i] = met['total_time']
             metrics['status'][i] = met['status']
-            metrics['states'].append(y)
-            metrics['controls'].append(u)
+            if self.track_states:
+                metrics['states'].append(y)
+            if self.agent.track_controls:
+                metrics['controls'].append(u)
 
         return metrics
 
@@ -139,8 +148,10 @@ class Simulation:
             metrics['heading_count'][i] = met[0]['heading_count']
             metrics['total_time'][i] = met[0]['total_time']
             metrics['status'][i] = met[0]['status']
-            metrics['states'].append(met[2])
-            metrics['controls'].append(met[3])
+            if self.track_states:
+                metrics['states'].append(met[2])
+            if self.agent.track_controls:
+                metrics['controls'].append(met[3])
 
         return metrics
 

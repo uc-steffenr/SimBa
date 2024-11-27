@@ -5,11 +5,20 @@ from ._controls import controls
 
 
 class Agent:
-    def __init__(self, **properties) -> None:
+    def __init__(self,
+                 track_readings : bool=False,
+                 track_controls : bool=False,
+                 **properties) -> None:
         """Initializes agent.
 
         Parameters
         ----------
+        track_readings : bool, optional
+            Flag to determine whether to save sensor readings, by
+            default False.
+        track_controls : bool, optional
+            Flag to determine whether to save control actions, by
+            default False.
         r : float
             Radius of agent, by default 0.165 m.
         m : float
@@ -50,6 +59,8 @@ class Agent:
         self.f_max = properties.get('f_max', 2.7)
         self.kd = properties.get('kd', 3.4)
         self.kn = properties.get('kn', 1_000.)
+        self.track_readings = track_readings
+        self.track_controls = track_controls
 
         # internal variables used for controls and metrics
         self._controls = properties.get('controls', controls)
@@ -69,7 +80,7 @@ class Agent:
 
         self.angs = 2.*np.pi*(np.arange(self.num_sensors)/self.num_sensors) + \
                     self.offset
-        
+
         self.sensor_readings = []
         self.control_actions = []
 
@@ -117,7 +128,8 @@ class Agent:
 
         # return minimum values of candidate sensor readings
         readings = np.min(readings, axis=0)
-        self.sensor_readings.append(readings)
+        if self.track_readings:
+            self.sensor_readings.append(readings)
         return readings
 
     def controls(self,
@@ -159,8 +171,10 @@ class Agent:
 
         u = self._controls(t, X, target, readings)
 
+        if self.track_controls:
+            self.control_actions.append(u)
+
         # enforce f_max
-        # TODO: come back and see if it's possible to just use one value
         u = np.min([u, np.ones_like(u)*self.f_max], axis=0)
         u = np.max([u, np.ones_like(u)*-self.f_max], axis=0)
 
