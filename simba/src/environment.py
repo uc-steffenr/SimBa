@@ -111,6 +111,9 @@ class Environment:
 
             # TODO: May want to put something in about initial state and
             # target state being a certain distance from each other
+            init_proximity_check = abs(x0 - xt) <= 0.25*(self.bounds[0][1] - \
+                self.bounds[0][0]) and (y0 - yt) <= 0.25*(self.bounds[1][0] - \
+                self.bounds[1][1])
 
             if not agent_within_check and not xt_within_check:
                 break
