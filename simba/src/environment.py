@@ -102,15 +102,17 @@ class Environment:
             X0 = Point(x0, y0)
             Xt = Point(xt, yt)
 
-            x0_within_check = any([X0.within(obst) for obst in \
-                                   self.obstacles[:-1]])
+            agent_within_check = any([X0.within(obst) or (X0.distance(obst) < \
+                                     (self.agent.r + \
+                                      self.agent._collision_thresh)) \
+                                     for obst in self.obstacles[:-1]])
             xt_within_check = any([Xt.within(obst) for obst in \
                                    self.obstacles[:-1]])
 
             # TODO: May want to put something in about initial state and
             # target state being a certain distance from each other
 
-            if not x0_within_check and not xt_within_check:
+            if not agent_within_check and not xt_within_check:
                 break
 
         # NOTE: We could make the initial velocities a random number too
