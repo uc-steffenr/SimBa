@@ -93,6 +93,7 @@ class Simulation:
                        heading_count=np.zeros(self.N),
                        total_time=np.zeros(self.N),
                        status=np.zeros(self.N),
+                       targ_dist=np.zeros(self.N),
                        states=[],
                        controls=[])
 
@@ -102,6 +103,7 @@ class Simulation:
             metrics['heading_count'][i] = met['heading_count']
             metrics['total_time'][i] = met['total_time']
             metrics['status'][i] = met['status']
+            metrics['targ_dist'][i] = met['targ_dist']
             if self.track_states:
                 metrics['states'].append(y)
             if self.agent.track_controls:
@@ -135,6 +137,7 @@ class Simulation:
                        heading_count=np.zeros(self.N),
                        total_time=np.zeros(self.N),
                        status=np.zeros(self.N),
+                       targ_dist=np.zeros(self.N),
                        states=[],
                        controls=[])
 
@@ -148,6 +151,7 @@ class Simulation:
             metrics['heading_count'][i] = met[0]['heading_count']
             metrics['total_time'][i] = met[0]['total_time']
             metrics['status'][i] = met[0]['status']
+            metrics['targ_dist'][i] = met[0]['targ_dist']
             if self.track_states:
                 metrics['states'].append(met[2])
             if self.agent.track_controls:

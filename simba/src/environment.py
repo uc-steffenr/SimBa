@@ -216,16 +216,21 @@ class Environment:
         metrics = dict(collision_count=None,
                        heading_count=None,
                        total_time=None,
-                       status=None)
+                       status=None,
+                       targ_dist=None)
 
         sol = solve_ivp(self.dynamics, (0., self.t_dur), self.X0,
                         events=[self.collision_event, self.target_event],
                         **solve_ivp_kwargs)
 
+        targ_dist = np.sqrt((self.target[0] - sol.y[0, -1])**2 + \
+                            (self.target[1] - sol.y[2, -1])**2)
+
         metrics['collision_count'] = self.agent.collision_count
         metrics['heading_count'] = self.agent.heading_count
         metrics['total_time'] = sol.t[-1]
         metrics['status'] = sol.status
+        metrics['targ_dist'] = targ_dist
 
         return metrics, sol.t, sol.y, self.agent.control_actions
 
