@@ -48,6 +48,44 @@ def plot_states(t : np.ndarray,
         fig.savefig(os.path.join(save_dir, 'states.jpg'))
 
 
+def plot_controls(agent : Agent,
+                  save : bool=True,
+                  show : bool=False,
+                  save_dir : str=os.path.abspath('')
+                  ) -> None:
+    """Plots controls of simulation.
+
+    Parameters
+    ----------
+    agent : Agent
+        Agent that traversed an environment.
+    save : bool, optional
+        Flag to save results, by default True.
+    show : bool, optional
+        Flag to determine whether to show results, by default False.
+    save_dir : str, optional
+        Path to save results to, by default os.path.abspath('').
+    """
+    fig, ax = plt.subplots(1, 2)
+    ax = ax.ravel()
+
+    us = np.array(agent.control_actions)
+
+    [a.plot(us[:, i]) for i, a in enumerate(ax)]
+    [a.set_xlabel('time (s)') for a in ax]
+    [a.set_ylabel('wheel force (N)') for a in ax]
+
+    ax[0].set_title('Left Wheel Control')
+    ax[1].set_title('Right Wheel Control')
+
+    [a.grid() for a in ax]
+
+    if show:
+        plt.show()
+    if save:
+        fig.savefig(os.path.join(save_dir, 'controls.jpg'))
+    
+
 def animate(t : np.ndarray,
             X : np.ndarray,
             agent : Agent,

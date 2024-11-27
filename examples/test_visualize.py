@@ -4,6 +4,7 @@ import numpy as np
 from simba import (Agent,
                    Environment,
                    plot_states,
+                   plot_controls,
                    plot_sensor_readings,
                    animate)
 
@@ -14,6 +15,14 @@ def test_plot_states():
     _, t, y, _ = env.evaluate(t_eval=np.linspace(0., 18., 100))
 
     plot_states(t, y, save=False, show=True)
+
+
+def test_plot_controls():
+    agent = Agent(track_controls=True)
+    env = Environment(agent)
+    _, _, _, _ = env.evaluate(t_eval=np.linspace(0., 18., 100))
+
+    plot_controls(agent, save=False, show=True)
 
 
 def test_plot_sensor_readings():
@@ -37,5 +46,6 @@ def test_animate():
 
 if __name__ == '__main__':
     test_plot_states()
+    test_plot_controls()
     test_plot_sensor_readings()
     test_animate()

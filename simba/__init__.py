@@ -19,5 +19,6 @@ from .src import (Agent,
                   Simulation,
                   timing,
                   plot_states,
+                  plot_controls,
                   plot_sensor_readings,
                   animate)

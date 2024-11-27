@@ -46,6 +46,7 @@ def test_run_simulation():
     assert 'heading_count' in metrics
     assert 'total_time' in metrics
     assert 'status' in metrics
+    assert 'targ_dist' in metrics
     assert len(metrics['collision_count']) == n_conditions
     print('Simulation ran successfully!')
 
