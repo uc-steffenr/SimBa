@@ -219,18 +219,21 @@ class Environment:
                        status=None,
                        targ_dist=None)
 
+        initial_dist = np.sqrt((self.target[0] - self.X0[0])**2 + \
+                                (self.target[1] - self.X0[2])**2)
+
         sol = solve_ivp(self.dynamics, (0., self.t_dur), self.X0,
                         events=[self.collision_event, self.target_event],
                         **solve_ivp_kwargs)
 
-        targ_dist = np.sqrt((self.target[0] - sol.y[0, -1])**2 + \
-                            (self.target[1] - sol.y[2, -1])**2)
+        final_dist = np.sqrt((self.target[0] - sol.y[0, -1])**2 + \
+                             (self.target[1] - sol.y[2, -1])**2)
 
         metrics['collision_count'] = self.agent.collision_count
         metrics['heading_count'] = self.agent.heading_count
         metrics['total_time'] = sol.t[-1]
         metrics['status'] = sol.status
-        metrics['targ_dist'] = targ_dist
+        metrics['progress'] = abs(initial_dist - final_dist)
 
         return metrics, sol.t, sol.y, self.agent.control_actions
 
