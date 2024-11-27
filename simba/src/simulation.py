@@ -88,6 +88,15 @@ class Simulation:
                     achieving the termination event, i.e. reaching the
                     target). See scipy.integrate.solve_ivp docs for more
                     information.
+                - progress
+                    Tracks difference between initial distance to target
+                    and final distance to target
+                - states
+                    If track_states is True, then the states for the run
+                    will be returned.
+                - controls
+                    If agent.track_controls is True, then the controls
+                    for the run will be returned.
         """
         metrics = dict(collision_count=np.zeros(self.N),
                        heading_count=np.zeros(self.N),
@@ -132,6 +141,15 @@ class Simulation:
                     achieving the termination event, i.e. reaching the
                     target). See scipy.integrate.solve_ivp docs for more
                     information.
+                - progress
+                    Tracks difference between initial distance to target
+                    and final distance to target
+                - states
+                    If track_states is True, then the states for the run
+                    will be returned.
+                - controls
+                    If agent.track_controls is True, then the controls
+                    for the run will be returned.
         """
         metrics = dict(collision_count=np.zeros(self.N),
                        heading_count=np.zeros(self.N),
