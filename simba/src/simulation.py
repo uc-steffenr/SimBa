@@ -18,6 +18,7 @@ class Simulation:
                  n_conditions : int,
                  n_obstacles : tuple[int]=(2,5),
                  sim_seed : int=12345,
+                 n_proc : int=1,
                  **environment_kwargs
                  ) -> None:
         """Instantiates simulation class for multiple sim evaluation.
@@ -39,6 +40,7 @@ class Simulation:
         self.N = n_conditions
         self.n_obstacles = n_obstacles
         self.seed = sim_seed
+        self.n_proc = n_proc
 
         self.rng = np.random.default_rng(sim_seed)
         env_seeds = self.rng.integers(low=10_000, high=60_000,
@@ -129,7 +131,7 @@ class Simulation:
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
-        with Pool() as pool:
+        with Pool(processes=self.n_proc) as pool:
             results = pool.map(evaluate_env, args)
 
         for i, met in enumerate(results):
@@ -146,7 +148,7 @@ class Simulation:
     def reset(self) -> None:
         """Resets RNG for Simulation and for environments.
         """
-        self.rng = np.random.integers(low=10_000, high=60_000, size=self.N)
+        self.rng = np.random.default_rng(self.seed)
 
         for env in self.envs:
             env.reset_rng()

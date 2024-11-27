@@ -64,7 +64,7 @@ class Environment:
         self.target_thresh = target_thresh
 
         self.rng = np.random.default_rng(seed)
-        
+
         self.bound_verts = np.array([[bounds[0][0], bounds[1][0]],
                                      [bounds[0][1], bounds[1][0]],
                                      [bounds[0][1], bounds[1][1]],
