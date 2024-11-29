@@ -5,6 +5,7 @@ from shapely import Polygon, LinearRing, Point
 
 from .agent import Agent
 from .dynamics import plant
+from .integrator import rk4
 from .utils import generate_verts
 
 
@@ -19,7 +20,8 @@ class Environment:
                  sep_factor : float=1.5,
                  epsilon : float=0.01,
                  seed : int=12345,
-                 target_thresh : float=0.01
+                 target_thresh : float=0.01,
+                 use_solve_ivp : bool=False
                  ) -> None:
         """Instantiates environment for simulation.
 
@@ -62,6 +64,7 @@ class Environment:
         self.epsilon = epsilon
         self.seed = seed
         self.target_thresh = target_thresh
+        self.use_solve_ivp = use_solve_ivp
 
         self.rng = np.random.default_rng(seed)
 
@@ -203,7 +206,10 @@ class Environment:
         dist = np.sqrt((self.target[0] - X[0])**2 + (self.target[1] - X[2])**2)
         return dist - self.target_thresh
 
-    def evaluate(self, **solve_ivp_kwargs) -> tuple[dict, np.ndarray]:
+    def evaluate(self,
+                 dt : float=0.01,
+                 **solve_ivp_kwargs
+                 ) -> tuple[dict, np.ndarray]:
         """Performs single evaluation of agent in enrionment.
 
         Returns
@@ -222,20 +228,28 @@ class Environment:
         initial_dist = np.sqrt((self.target[0] - self.X0[0])**2 + \
                                 (self.target[1] - self.X0[2])**2)
 
-        sol = solve_ivp(self.dynamics, (0., self.t_dur), self.X0,
-                        events=[self.collision_event, self.target_event],
-                        **solve_ivp_kwargs)
+        if self.use_solve_ivp:
+            sol = solve_ivp(self.dynamics, (0., self.t_dur), self.X0,
+                            events=[self.collision_event, self.target_event],
+                            **solve_ivp_kwargs)
+            metrics['total_time'] = sol.t[-1]
+            metrics['status'] = sol.status
+            t = sol.t
+            y = sol.y
+        else:
+            t, y, status = rk4(self.dynamics, (0., self.t_dur), dt, self.X0,
+                               self.target_event)
+            metrics['total_time'] = t[-1]
+            metrics['status'] = status
 
-        final_dist = np.sqrt((self.target[0] - sol.y[0, -1])**2 + \
-                             (self.target[1] - sol.y[2, -1])**2)
+        final_dist = np.sqrt((self.target[0] - y[0, -1])**2 + \
+                             (self.target[1] - y[2, -1])**2)
 
         metrics['collision_count'] = self.agent.collision_count
         metrics['heading_count'] = self.agent.heading_count
-        metrics['total_time'] = sol.t[-1]
-        metrics['status'] = sol.status
         metrics['progress'] = abs(initial_dist - final_dist)
 
-        return metrics, sol.t, sol.y, self.agent.control_actions
+        return metrics, t, y, self.agent.control_actions
 
     def reset_rng(self):
         """Resets the RNG for the environment.
