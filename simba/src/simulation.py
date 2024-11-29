@@ -8,8 +8,8 @@ from .environment import Environment
 
 def evaluate_env(args):
     env, solve_ivp_kwargs = args
-    met, _, _ = env.evaluate(**solve_ivp_kwargs)
-    return met
+    met, ts, ys, us = env.evaluate(**solve_ivp_kwargs)
+    return met, ts, ys, us
 
 
 class Simulation:
@@ -18,6 +18,8 @@ class Simulation:
                  n_conditions : int,
                  n_obstacles : tuple[int]=(2,5),
                  sim_seed : int=12345,
+                 n_proc : int=1,
+                 track_states : bool=False,
                  **environment_kwargs
                  ) -> None:
         """Instantiates simulation class for multiple sim evaluation.
@@ -34,11 +36,18 @@ class Simulation:
         sim_seed : int, optional
             Seed for simulation to set environment seeds, by
             default 12345.
+        n_proc : int, optional
+            Number of processors to run tasks in parallel, by default 1.
+        track_states : bool, optional
+            Whether or not to return states of each run as a metric, by
+            default False.
         """
         self.agent = agent
         self.N = n_conditions
         self.n_obstacles = n_obstacles
         self.seed = sim_seed
+        self.n_proc = n_proc
+        self.track_states = track_states
 
         self.rng = np.random.default_rng(sim_seed)
         env_seeds = self.rng.integers(low=10_000, high=60_000,
@@ -79,18 +88,35 @@ class Simulation:
                     achieving the termination event, i.e. reaching the
                     target). See scipy.integrate.solve_ivp docs for more
                     information.
+                - progress
+                    Tracks difference between initial distance to target
+                    and final distance to target
+                - states
+                    If track_states is True, then the states for the run
+                    will be returned.
+                - controls
+                    If agent.track_controls is True, then the controls
+                    for the run will be returned.
         """
         metrics = dict(collision_count=np.zeros(self.N),
                        heading_count=np.zeros(self.N),
                        total_time=np.zeros(self.N),
-                       status=np.zeros(self.N))
+                       status=np.zeros(self.N),
+                       progress=np.zeros(self.N),
+                       states=[],
+                       controls=[])
 
         for i, env in enumerate(self.envs):
-            met, _, _ = env.evaluate(**solve_ivp_kwargs)
+            met, _, y, u = env.evaluate(**solve_ivp_kwargs)
             metrics['collision_count'][i] = met['collision_count']
             metrics['heading_count'][i] = met['heading_count']
             metrics['total_time'][i] = met['total_time']
             metrics['status'][i] = met['status']
+            metrics['progress'][i] = met['progress']
+            if self.track_states:
+                metrics['states'].append(y)
+            if self.agent.track_controls:
+                metrics['controls'].append(u)
 
         return metrics
 
@@ -115,22 +141,39 @@ class Simulation:
                     achieving the termination event, i.e. reaching the
                     target). See scipy.integrate.solve_ivp docs for more
                     information.
+                - progress
+                    Tracks difference between initial distance to target
+                    and final distance to target
+                - states
+                    If track_states is True, then the states for the run
+                    will be returned.
+                - controls
+                    If agent.track_controls is True, then the controls
+                    for the run will be returned.
         """
         metrics = dict(collision_count=np.zeros(self.N),
                        heading_count=np.zeros(self.N),
                        total_time=np.zeros(self.N),
-                       status=np.zeros(self.N))
+                       status=np.zeros(self.N),
+                       progress=np.zeros(self.N),
+                       states=[],
+                       controls=[])
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
-        with Pool() as pool:
+        with Pool(processes=self.n_proc) as pool:
             results = pool.map(evaluate_env, args)
 
         for i, met in enumerate(results):
-            metrics['collision_count'][i] = met['collision_count']
-            metrics['heading_count'][i] = met['heading_count']
-            metrics['total_time'][i] = met['total_time']
-            metrics['status'][i] = met['status']
+            metrics['collision_count'][i] = met[0]['collision_count']
+            metrics['heading_count'][i] = met[0]['heading_count']
+            metrics['total_time'][i] = met[0]['total_time']
+            metrics['status'][i] = met[0]['status']
+            metrics['progress'][i] = met[0]['progress']
+            if self.track_states:
+                metrics['states'].append(met[2])
+            if self.agent.track_controls:
+                metrics['controls'].append(met[3])
 
         return metrics
 
@@ -138,7 +181,7 @@ class Simulation:
     def reset(self) -> None:
         """Resets RNG for Simulation and for environments.
         """
-        self.rng = np.random.integers(low=10_000, high=60_000, size=self.N)
+        self.rng = np.random.default_rng(self.seed)
 
         for env in self.envs:
             env.reset_rng()

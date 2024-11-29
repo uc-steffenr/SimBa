@@ -64,11 +64,13 @@ class Environment:
         self.target_thresh = target_thresh
 
         self.rng = np.random.default_rng(seed)
-        
+
         self.bound_verts = np.array([[bounds[0][0], bounds[1][0]],
                                      [bounds[0][1], bounds[1][0]],
                                      [bounds[0][1], bounds[1][1]],
                                      [bounds[0][0], bounds[1][1]]])
+
+        self._generate_environment()
 
     # will generate roomba position and target
     def _generate_environment(self):
@@ -100,15 +102,20 @@ class Environment:
             X0 = Point(x0, y0)
             Xt = Point(xt, yt)
 
-            x0_within_check = any([X0.within(obst) for obst in \
-                                   self.obstacles[:-1]])
+            agent_within_check = any([X0.within(obst) or (X0.distance(obst) < \
+                                     (self.agent.r + \
+                                      self.agent._collision_thresh)) \
+                                     for obst in self.obstacles[:-1]])
             xt_within_check = any([Xt.within(obst) for obst in \
                                    self.obstacles[:-1]])
 
             # TODO: May want to put something in about initial state and
             # target state being a certain distance from each other
+            init_proximity_check = abs(x0 - xt) <= 0.25*(self.bounds[0][1] - \
+                self.bounds[0][0]) and (y0 - yt) <= 0.25*(self.bounds[1][0] - \
+                self.bounds[1][1])
 
-            if not x0_within_check and not xt_within_check:
+            if not agent_within_check and not xt_within_check:
                 break
 
         # NOTE: We could make the initial velocities a random number too
@@ -205,23 +212,30 @@ class Environment:
             Metrics, time steps, and states.
         """
         self.agent.reset()
-        self._generate_environment()
 
         metrics = dict(collision_count=None,
                        heading_count=None,
                        total_time=None,
-                       status=None)
+                       status=None,
+                       targ_dist=None)
+
+        initial_dist = np.sqrt((self.target[0] - self.X0[0])**2 + \
+                                (self.target[1] - self.X0[2])**2)
 
         sol = solve_ivp(self.dynamics, (0., self.t_dur), self.X0,
                         events=[self.collision_event, self.target_event],
                         **solve_ivp_kwargs)
 
+        final_dist = np.sqrt((self.target[0] - sol.y[0, -1])**2 + \
+                             (self.target[1] - sol.y[2, -1])**2)
+
         metrics['collision_count'] = self.agent.collision_count
         metrics['heading_count'] = self.agent.heading_count
         metrics['total_time'] = sol.t[-1]
         metrics['status'] = sol.status
+        metrics['progress'] = abs(initial_dist - final_dist)
 
-        return metrics, sol.t, sol.y
+        return metrics, sol.t, sol.y, self.agent.control_actions
 
     def reset_rng(self):
         """Resets the RNG for the environment.
