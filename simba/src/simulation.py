@@ -19,6 +19,7 @@ class Simulation:
                  n_obstacles : tuple[int]=(2,5),
                  sim_seed : int=12345,
                  n_proc : int=1,
+                 track_times : bool=False,
                  track_states : bool=False,
                  **environment_kwargs
                  ) -> None:
@@ -38,6 +39,9 @@ class Simulation:
             default 12345.
         n_proc : int, optional
             Number of processors to run tasks in parallel, by default 1.
+        track_times : bool, optional
+            Whether or not to return the times of each run as a metric, 
+            by default False.
         track_states : bool, optional
             Whether or not to return states of each run as a metric, by
             default False.
@@ -48,6 +52,7 @@ class Simulation:
         self.seed = sim_seed
         self.n_proc = n_proc
         self.track_states = track_states
+        self.track_times = track_times
 
         self.rng = np.random.default_rng(sim_seed)
         env_seeds = self.rng.integers(low=10_000, high=60_000,
@@ -103,16 +108,19 @@ class Simulation:
                        total_time=np.zeros(self.N),
                        status=np.zeros(self.N),
                        progress=np.zeros(self.N),
+                       times=[],
                        states=[],
                        controls=[])
 
         for i, env in enumerate(self.envs):
-            met, _, y, u = env.evaluate(**solve_ivp_kwargs)
+            met, t, y, u = env.evaluate(**solve_ivp_kwargs)
             metrics['collision_count'][i] = met['collision_count']
             metrics['heading_count'][i] = met['heading_count']
             metrics['total_time'][i] = met['total_time']
             metrics['status'][i] = met['status']
             metrics['progress'][i] = met['progress']
+            if self.track_times:
+                metrics['times'].append(t)
             if self.track_states:
                 metrics['states'].append(y)
             if self.agent.track_controls:
@@ -157,6 +165,7 @@ class Simulation:
                        status=np.zeros(self.N),
                        progress=np.zeros(self.N),
                        states=[],
+                       times=[],
                        controls=[])
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
@@ -170,6 +179,8 @@ class Simulation:
             metrics['total_time'][i] = met[0]['total_time']
             metrics['status'][i] = met[0]['status']
             metrics['progress'][i] = met[0]['progress']
+            if self.track_times:
+                metrics['times'].append(met[1])
             if self.track_states:
                 metrics['states'].append(met[2])
             if self.agent.track_controls:

@@ -47,6 +47,9 @@ def test_run_simulation():
     assert 'total_time' in metrics
     assert 'status' in metrics
     assert 'progress' in metrics
+    assert 'times' in metrics
+    assert 'states' in metrics
+    assert 'controls' in metrics
     assert len(metrics['collision_count']) == n_conditions
     print('Simulation ran successfully!')
 
@@ -63,6 +66,9 @@ def test_run_parallel_simulation():
     assert 'total_time' in metrics
     assert 'status' in metrics
     assert 'progress' in metrics
+    assert 'times' in metrics
+    assert 'states' in metrics
+    assert 'controls' in metrics
     assert len(metrics['collision_count']) == n_conditions
     print('Parallel simulation ran successfully!')
 
