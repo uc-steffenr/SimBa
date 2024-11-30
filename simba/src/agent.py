@@ -83,6 +83,7 @@ class Agent:
 
         self.sensor_readings = []
         self.control_actions = []
+        self.control_times = []
 
     def sensor_reading(self,
                        X : np.ndarray,
@@ -173,6 +174,7 @@ class Agent:
 
         if self.track_controls:
             self.control_actions.append(u)
+            self.control_times.append(t)
 
         # enforce f_max
         u = np.min([u, np.ones_like(u)*self.f_max], axis=0)
@@ -199,6 +201,7 @@ class Agent:
         """Resets control actions list.
         """
         self.control_actions = []
+        self.control_times = []
 
     def reset(self):
         """Resets metrics.
