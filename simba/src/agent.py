@@ -63,13 +63,13 @@ class Agent:
         self.track_controls = track_controls
 
         # internal variables used for controls and metrics
-        self._controls = properties.get('controls', controls)
+        self.controls = properties.get('controls', controls)
         self._collision_thresh = properties.get('collision_thresh', 0.001)
         self._heading_thresh = properties.get('heading_thresh', 0.01)
 
         # set up metrics
-        self.collision_count = 0.
-        self.heading_count = 0.
+        self.collision_steps = []
+        self.heading_steps = []
 
         # TODO: this stuff is ugly... want to fix it later
         # calculate vertices for reuse in Polygons
@@ -164,12 +164,11 @@ class Agent:
         else:
             readings = np.ones(self.num_sensors)*self.sensor_dist
 
-        if np.any(readings < self._collision_thresh):
-            self.collision_count += 1
+        self.collision_steps.append(np.any(readings < self._collision_thresh))
 
         target_heading = np.arctan((target[1] - X[2])/(target[0] - X[0]))
-        if np.abs(target_heading - X[4]) > self._heading_thresh:
-            self.heading_count += 1
+        self.heading_steps.append(np.abs(target_heading - X[4]) > \
+                                  self._heading_thresh)
 
         u = self._controls(t, X, target, readings)
 

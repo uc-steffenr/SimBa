@@ -80,51 +80,55 @@ class Simulation:
         -------
         dict[np.ndarray]
             Dictionary of results. Keys are:
-                - collision_count
-                    Number of collisions picked up by sensors.
-                - heading_count
-                    Number of timesteps where agent heading to target is
-                    outside of the specified threshold.
-                - total_time
+                - collision_steps \\
+                    Steps where a collision was read by a sensor.
+                - heading_steps \\
+                    Steps where agent heading to target is outside of the
+                    specified threshold.
+                - total_time \\
                     Time spent for each environment evaluation.
-                - status
+                - status \\
                     Termination status of integrator (-1 for failed
                     integration, 0 for reaching final time, and 1 for
                     achieving the termination event, i.e. reaching the
                     target). See scipy.integrate.solve_ivp docs for more
                     information.
-                - progress
+                - progress \\
                     Tracks difference between initial distance to target
                     and final distance to target
-                - states
+                - states \\
                     If track_states is True, then the states for the run
                     will be returned.
-                - controls
+                - controls \\
                     If agent.track_controls is True, then the controls
                     for the run will be returned.
         """
-        metrics = dict(collision_count=np.zeros(self.N),
-                       heading_count=np.zeros(self.N),
+        metrics = dict(collision_steps=[None]*self.N,
+                       heading_steps=[None]*self.N,
                        total_time=np.zeros(self.N),
-                       status=np.zeros(self.N),
-                       progress=np.zeros(self.N),
-                       times=[],
-                       states=[],
-                       controls=[])
+                       status=np.zeros(self.N, dtype=np.int8),
+                       progress=np.zeros(self.N))
+
+        if self.track_times:
+            metrics['times'] = [None]*self.N
+        if self.track_states:
+            metrics['states'] = [None]*self.N
+        if self.agent.track_controls:
+            metrics['controls'] = [None]*self.N
 
         for i, env in enumerate(self.envs):
-            met, _, y, u = env.evaluate(**solve_ivp_kwargs)
-            metrics['collision_count'][i] = met['collision_count']
-            metrics['heading_count'][i] = met['heading_count']
+            met, _, _, u = env.evaluate(**solve_ivp_kwargs)
+            metrics['collision_steps'][i] = met['collision_steps']
+            metrics['heading_steps'][i] = met['heading_steps']
             metrics['total_time'][i] = met['total_time']
             metrics['status'][i] = met['status']
             metrics['progress'][i] = met['progress']
             if self.track_times:
-                metrics['times'].append(env.agent.control_times)
+                metrics['times'][i] = env.agent.control_times
             if self.track_states:
-                metrics['states'].append(env.agent.control_states)
+                metrics['states'][i] = env.agent.control_states
             if self.agent.track_controls:
-                metrics['controls'].append(u)
+                metrics['controls'][i] = u
 
         return metrics
 
@@ -136,37 +140,41 @@ class Simulation:
         -------
         dict[np.ndarray]
             Dictionary of results. Keys are:
-                - collision_count
-                    Number of collisions picked up by sensors.
-                - heading_count
-                    Number of timesteps where agent heading to target is
-                    outside of the specified threshold.
-                - total_time
+                - collision_steps \\
+                    Steps where a collision was read by a sensor.
+                - heading_steps \\
+                    Steps where agent heading to target is outside of the
+                    specified threshold.
+                - total_time \\
                     Time spent for each environment evaluation.
-                - status
+                - status \\
                     Termination status of integrator (-1 for failed
                     integration, 0 for reaching final time, and 1 for
                     achieving the termination event, i.e. reaching the
                     target). See scipy.integrate.solve_ivp docs for more
                     information.
-                - progress
+                - progress \\
                     Tracks difference between initial distance to target
                     and final distance to target
-                - states
+                - states \\
                     If track_states is True, then the states for the run
                     will be returned.
-                - controls
+                - controls \\
                     If agent.track_controls is True, then the controls
                     for the run will be returned.
         """
-        metrics = dict(collision_count=np.zeros(self.N),
-                       heading_count=np.zeros(self.N),
+        metrics = dict(collision_steps=[None]*self.N,
+                       heading_steps=[None]*self.N,
                        total_time=np.zeros(self.N),
-                       status=np.zeros(self.N),
-                       progress=np.zeros(self.N),
-                       states=[],
-                       times=[],
-                       controls=[])
+                       status=np.zeros(self.N, dtype=np.int8),
+                       progress=np.zeros(self.N))
+
+        if self.track_times:
+            metrics['times'] = [None]*self.N
+        if self.track_states:
+            metrics['states'] = [None]*self.N
+        if self.agent.track_controls:
+            metrics['controls'] = [None]*self.N
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
@@ -174,17 +182,17 @@ class Simulation:
             results = pool.map(evaluate_env, args)
 
         for i, met in enumerate(results):
-            metrics['collision_count'][i] = met[0]['collision_count']
-            metrics['heading_count'][i] = met[0]['heading_count']
+            metrics['collision_steps'][i] = met[0]['collision_steps']
+            metrics['heading_steps'][i] = met[0]['heading_steps']
             metrics['total_time'][i] = met[0]['total_time']
             metrics['status'][i] = met[0]['status']
             metrics['progress'][i] = met[0]['progress']
             if self.track_times:
-                metrics['times'].append(met[1])
+                metrics['times'][i] = met[1]
             if self.track_states:
-                metrics['states'].append(met[2])
+                metrics['states'][i] = met[2]
             if self.agent.track_controls:
-                metrics['controls'].append(met[3])
+                metrics['controls'][i] = met[3]
 
         return metrics
 

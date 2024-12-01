@@ -229,8 +229,8 @@ class Environment:
         final_dist = np.sqrt((self.target[0] - sol.y[0, -1])**2 + \
                              (self.target[1] - sol.y[2, -1])**2)
 
-        metrics['collision_count'] = self.agent.collision_count
-        metrics['heading_count'] = self.agent.heading_count
+        metrics['collision_steps'] = self.agent.collision_steps
+        metrics['heading_steps'] = self.agent.heading_steps
         metrics['total_time'] = sol.t[-1]
         metrics['status'] = sol.status
         metrics['progress'] = abs(initial_dist - final_dist)
