@@ -84,6 +84,7 @@ class Agent:
         self.sensor_readings = []
         self.control_actions = []
         self.control_times = []
+        self.control_states = []
 
     def sensor_reading(self,
                        X : np.ndarray,
@@ -202,6 +203,7 @@ class Agent:
         """
         self.control_actions = []
         self.control_times = []
+        self.control_states = []
 
     def reset(self):
         """Resets metrics.

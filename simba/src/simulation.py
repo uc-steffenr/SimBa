@@ -8,8 +8,8 @@ from .environment import Environment
 
 def evaluate_env(args):
     env, solve_ivp_kwargs = args
-    met, _, ys, us = env.evaluate(**solve_ivp_kwargs)
-    return met, env.agent.control_times, ys, us
+    met, _, _, us = env.evaluate(**solve_ivp_kwargs)
+    return met, env.agent.control_times, env.agent.control_states, us
 
 
 class Simulation:
@@ -122,7 +122,7 @@ class Simulation:
             if self.track_times:
                 metrics['times'].append(env.agent.control_times)
             if self.track_states:
-                metrics['states'].append(y)
+                metrics['states'].append(env.agent.control_states)
             if self.agent.track_controls:
                 metrics['controls'].append(u)
 
