@@ -63,7 +63,7 @@ class Agent:
         self.track_controls = track_controls
 
         # internal variables used for controls and metrics
-        self.controls = properties.get('controls', controls)
+        self.controller = properties.get('controls', controls)
         self._collision_thresh = properties.get('collision_thresh', 0.001)
         self._heading_thresh = properties.get('heading_thresh', 0.01)
 
@@ -170,11 +170,16 @@ class Agent:
         self.heading_steps.append(np.abs(target_heading - X[4]) > \
                                   self._heading_thresh)
 
-        u = self._controls(t, X, target, readings)
+        state = np.concatenate((X, target, np.array(readings, dtype=float)), dtype=float)
+
+        u = self.controller(state)
 
         if self.track_controls:
+            # print(u)
             self.control_actions.append(u)
             self.control_times.append(t)
+            # print(X)
+            self.control_states.append(X)
 
         # enforce f_max
         u = np.min([u, np.ones_like(u)*self.f_max], axis=0)
@@ -182,15 +187,15 @@ class Agent:
 
         return u
 
-    def reset_collision_count(self):
+    def reset_collision_steps(self):
         """Resets collision metric count.
         """
-        self.collision_count = 0
+        self.collision_steps = []
 
-    def reset_heading_count(self):
+    def reset_heading_steps(self):
         """Resets heading metric count.
         """
-        self.heading_count = 0
+        self.heading_steps = []
 
     def reset_sensor_readings(self):
         """Resets sensor readings list.
@@ -207,7 +212,7 @@ class Agent:
     def reset(self):
         """Resets metrics.
         """
-        self.reset_collision_count()
-        self.reset_heading_count()
+        self.reset_collision_steps()
+        self.reset_heading_steps()
         self.reset_sensor_readings()
         self.reset_control_actions()

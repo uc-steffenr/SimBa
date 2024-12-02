@@ -217,7 +217,7 @@ class Environment:
                        heading_count=None,
                        total_time=None,
                        status=None,
-                       targ_dist=None)
+                       progress=None)
 
         initial_dist = np.sqrt((self.target[0] - self.X0[0])**2 + \
                                 (self.target[1] - self.X0[2])**2)

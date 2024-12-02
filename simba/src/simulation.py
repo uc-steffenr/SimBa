@@ -178,8 +178,11 @@ class Simulation:
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
+        # print('before pool')
         with Pool(processes=self.n_proc) as pool:
             results = pool.map(evaluate_env, args)
+        # print('after pool')
+
 
         for i, met in enumerate(results):
             metrics['collision_steps'][i] = met[0]['collision_steps']
