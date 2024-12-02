@@ -9,7 +9,11 @@ from .environment import Environment
 def evaluate_env(args):
     env, solve_ivp_kwargs = args
     met, _, _, us = env.evaluate(**solve_ivp_kwargs)
-    return met, env.agent.control_times, env.agent.control_states, us
+    return (met,
+            env.agent.control_times,
+            env.agent.control_states,
+            us,
+            env.agent.sensor_readings)
 
 
 class Simulation:
@@ -115,6 +119,8 @@ class Simulation:
             metrics['states'] = [None]*self.N
         if self.agent.track_controls:
             metrics['controls'] = [None]*self.N
+        if self.agent.track_readings:
+            metrics['readings'] = [None]*self.N
 
         for i, env in enumerate(self.envs):
             met, _, _, u = env.evaluate(**solve_ivp_kwargs)
@@ -129,6 +135,8 @@ class Simulation:
                 metrics['states'][i] = env.agent.control_states
             if self.agent.track_controls:
                 metrics['controls'][i] = u
+            if self.agent.track_readings:
+                metrics['readings'][i] = env.agent.sensor_readings
 
         return metrics
 
@@ -175,6 +183,8 @@ class Simulation:
             metrics['states'] = [None]*self.N
         if self.agent.track_controls:
             metrics['controls'] = [None]*self.N
+        if self.agent.track_readings:
+            metrics['readings'] = [None]*self.N
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
@@ -196,6 +206,8 @@ class Simulation:
                 metrics['states'][i] = met[2]
             if self.agent.track_controls:
                 metrics['controls'][i] = met[3]
+            if self.agent.track_readings:
+                metrics['readings'][i] = met[4]
 
         return metrics
 
