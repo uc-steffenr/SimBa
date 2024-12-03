@@ -1,5 +1,6 @@
 """Defines agent class for roomba."""
 import numpy as np
+import torch
 from shapely import Polygon, LineString, intersection
 from ._controls import controls
 
@@ -182,6 +183,10 @@ class Agent:
             self.control_times.append(t)
             # print(X)
             self.control_states.append(X)
+            
+        # Ensure `u` is on the CPU before converting to NumPy
+        if isinstance(u, torch.Tensor):
+            u = u.detach().cpu().numpy()
 
         # enforce f_max
         u = np.min([u, np.ones_like(u)*self.f_max], axis=0)
