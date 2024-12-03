@@ -170,7 +170,8 @@ class Agent:
         self.heading_steps.append(np.abs(target_heading - X[4]) > \
                                   self._heading_thresh)
 
-        state = np.concatenate((X, target, np.array(readings, dtype=float)), dtype=float)
+        targ = np.array([target[0], 0., target[1], 0., 0., 0.])
+        state = np.concatenate((X-targ, np.array(readings, dtype=float)), dtype=float)
 
         u = self.controller(state)
 
