@@ -77,6 +77,7 @@ class Agent:
             self.r*np.cos(np.linspace(0., 2*np.pi, 50)),
             self.r*np.sin(np.linspace(0., 2.*np.pi, 50))
             ])
+        self.verts = np.append(self.verts, [self.verts[0, 0], self.verts[1, 0]])
 
         self.angs = 2.*np.pi*(np.arange(self.num_sensors)/self.num_sensors) + \
                     self.offset
