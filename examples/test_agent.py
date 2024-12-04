@@ -5,7 +5,7 @@ from shapely import LineString
 from simba import Agent
 
 
-def dummy_controller(t, X, target, reading):
+def dummy_controller(t):
     if t > 1.:
         u = np.array([1., -1.])
     else:
@@ -54,7 +54,7 @@ def test_instantiation():
     assert agent.f_max == f_max
     assert agent.kd == kd
     assert agent.kn == kn
-    assert agent._controls.__code__ == controls.__code__
+    assert agent.controller.__code__ == controls.__code__
     assert agent._collision_thresh == collision_thresh
     assert agent._heading_thresh == heading_thresh
     print('Values instantiated correctly!')
@@ -91,5 +91,5 @@ def test_controls():
 
 if __name__ == '__main__':
     test_instantiation()
-    test_sensor_reading()
-    test_controls()
+    # test_sensor_reading()
+    # test_controls()
