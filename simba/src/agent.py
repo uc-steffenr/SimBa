@@ -132,8 +132,6 @@ class Agent:
 
         # return minimum values of candidate sensor readings
         readings = np.min(readings, axis=0)
-        if self.track_readings:
-            self.sensor_readings.append(readings)
         return readings
 
     def controls(self,
@@ -183,6 +181,9 @@ class Agent:
             self.control_times.append(t)
             # print(X)
             self.control_states.append(X)
+
+        if self.track_readings:
+            self.sensor_readings.append(readings)
             
         # Ensure `u` is on the CPU before converting to NumPy
         if isinstance(u, torch.Tensor):
