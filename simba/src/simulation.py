@@ -219,4 +219,3 @@ class Simulation:
 
         for env in self.envs:
             env.reset_rng()
-            env.agent.reset()
