@@ -148,26 +148,26 @@ class Simulation:
         -------
         dict[np.ndarray]
             Dictionary of results. Keys are:
-                - collision_steps \\
+                - collision_steps \
                     Steps where a collision was read by a sensor.
-                - heading_steps \\
+                - heading_steps \
                     Steps where agent heading to target is outside of the
                     specified threshold.
-                - total_time \\
+                - total_time \
                     Time spent for each environment evaluation.
-                - status \\
+                - status \
                     Termination status of integrator (-1 for failed
                     integration, 0 for reaching final time, and 1 for
                     achieving the termination event, i.e. reaching the
                     target). See scipy.integrate.solve_ivp docs for more
                     information.
-                - progress \\
+                - progress \
                     Tracks difference between initial distance to target
                     and final distance to target
-                - states \\
+                - states \
                     If track_states is True, then the states for the run
                     will be returned.
-                - controls \\
+                - controls \
                     If agent.track_controls is True, then the controls
                     for the run will be returned.
         """
@@ -188,10 +188,8 @@ class Simulation:
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
-        # print('before pool')
         with Pool(processes=self.n_proc) as pool:
             results = pool.map(evaluate_env, args)
-        # print('after pool')
 
 
         for i, met in enumerate(results):

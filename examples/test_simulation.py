@@ -36,40 +36,42 @@ def test_instantiation():
 
 
 def test_run_simulation():
-    agent = Agent()
+    agent = Agent(track_controls=True, track_readings=True)
     n_conditions = 5
-    sim = Simulation(agent, n_conditions)
+    sim = Simulation(agent, n_conditions,
+                     track_states=True, track_times=True)
 
     metrics = sim.run_simulation()
 
-    assert 'collision_count' in metrics
-    assert 'heading_count' in metrics
+    assert 'collision_steps' in metrics
+    assert 'heading_steps' in metrics
     assert 'total_time' in metrics
     assert 'status' in metrics
     assert 'progress' in metrics
     assert 'times' in metrics
     assert 'states' in metrics
     assert 'controls' in metrics
-    assert len(metrics['collision_count']) == n_conditions
+    assert len(metrics['collision_steps']) == n_conditions
     print('Simulation ran successfully!')
 
 
 def test_run_parallel_simulation():
-    agent = Agent()
+    agent = Agent(track_controls=True, track_readings=True)
     n_conditions = 50
-    sim = Simulation(agent, n_conditions, n_proc=5)
+    sim = Simulation(agent, n_conditions, n_proc=5,
+                     track_states=True, track_times=True)
 
     metrics, _ = timing(sim.run_parallel_simulations)()
 
-    assert 'collision_count' in metrics
-    assert 'heading_count' in metrics
+    assert 'collision_steps' in metrics
+    assert 'heading_steps' in metrics
     assert 'total_time' in metrics
     assert 'status' in metrics
     assert 'progress' in metrics
     assert 'times' in metrics
     assert 'states' in metrics
     assert 'controls' in metrics
-    assert len(metrics['collision_count']) == n_conditions
+    assert len(metrics['collision_steps']) == n_conditions
     print('Parallel simulation ran successfully!')
 
 

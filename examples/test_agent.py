@@ -5,7 +5,7 @@ from shapely import LineString
 from simba import Agent
 
 
-def dummy_controller(t):
+def dummy_controller(t, y, target, readings):
     if t > 1.:
         u = np.array([1., -1.])
     else:
@@ -91,5 +91,5 @@ def test_controls():
 
 if __name__ == '__main__':
     test_instantiation()
-    # test_sensor_reading()
-    # test_controls()
+    test_sensor_reading()
+    test_controls()

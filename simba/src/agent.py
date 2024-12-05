@@ -1,6 +1,5 @@
 """Defines agent class for roomba."""
 import numpy as np
-import torch
 from shapely import Polygon, LineString, intersection
 from ._controls import controls
 
@@ -170,24 +169,15 @@ class Agent:
         self.heading_steps.append(np.abs(target_heading - X[4]) > \
                                   self._heading_thresh)
 
-        targ = np.array([target[0], 0., target[1], 0., 0., 0.])
-        state = np.concatenate((X-targ, np.array(readings, dtype=float)), dtype=float)
-
-        u = self.controller(state)
+        u = self.controller(t, X, target, readings)
 
         if self.track_controls:
-            # print(u)
             self.control_actions.append(u)
             self.control_times.append(t)
-            # print(X)
             self.control_states.append(X)
 
         if self.track_readings:
             self.sensor_readings.append(readings)
-            
-        # Ensure `u` is on the CPU before converting to NumPy
-        if isinstance(u, torch.Tensor):
-            u = u.detach().cpu().numpy()
 
         # enforce f_max
         u = np.min([u, np.ones_like(u)*self.f_max], axis=0)
