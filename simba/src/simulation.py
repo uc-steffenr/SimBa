@@ -2,7 +2,8 @@
 import numpy as np
 # from loky import ProcessPoolExecutor
 # from concurrent.futures import ProcessPoolExecutor
-from multiprocessing import Pool
+# from multiprocessing import Pool
+from joblib import Parallel, delayed, parallel_backend
 
 from .agent import Agent
 from .environment import Environment
@@ -190,8 +191,9 @@ class Simulation:
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
-        with Pool(processes=self.n_proc) as pool:
-            results = pool.map(evaluate_env, args)
+        with parallel_backend('loky', n_jobs=self.n_proc):
+            results = Parallel()(delayed(evaluate_env)(arg) for arg in args)
+            # results = pool.map(evaluate_env, args)
             # results = list(executor.map(evaluate_env, args))
 
 
