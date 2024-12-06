@@ -1,6 +1,6 @@
 """Defines simulation class to obtain metrics over multiple runs."""
 import numpy as np
-from multiprocessing import Pool
+from loky import ProcessPoolExecutor
 
 from .agent import Agent
 from .environment import Environment
@@ -188,8 +188,8 @@ class Simulation:
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
-        with Pool(processes=self.n_proc) as pool:
-            results = pool.map(evaluate_env, args)
+        with ProcessPoolExecutor(max_workers=self.n_proc) as executor:
+            results = list(executor.map(evaluate_env, args))
 
 
         for i, met in enumerate(results):
