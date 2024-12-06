@@ -1,6 +1,7 @@
 """Defines simulation class to obtain metrics over multiple runs."""
 import numpy as np
-from loky import ProcessPoolExecutor
+# from loky import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 
 from .agent import Agent
 from .environment import Environment
