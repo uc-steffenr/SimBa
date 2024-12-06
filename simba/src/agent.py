@@ -107,8 +107,8 @@ class Agent:
         """
         # calculate sensor lines at current state
         angs = self.angs + X[4]
-        sensor_verts = np.array([[X[0] + self.r*np.cos(angs),
-                                  X[2] + self. r*np.sin(angs)],
+        sensor_verts = np.array([[X[0] + self.r*np.cos(angs) - 0.01,
+                                  X[2] + self. r*np.sin(angs) - 0.01],
                                  [X[0] + (self.r+self.sensor_dist)*np.cos(angs),
                                   X[2] + (self.r+self.sensor_dist)*np.sin(angs)
                                   ]]).transpose(2, 0, 1)
