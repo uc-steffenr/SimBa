@@ -1,8 +1,5 @@
 """Defines simulation class to obtain metrics over multiple runs."""
 import numpy as np
-# from loky import ProcessPoolExecutor
-# from concurrent.futures import ProcessPoolExecutor
-# from multiprocessing import Pool
 from joblib import Parallel, delayed, parallel_backend
 
 from .agent import Agent
@@ -144,8 +141,15 @@ class Simulation:
         return metrics
 
 
-    def run_parallel_simulations(self, **solve_ivp_kwargs) -> dict[np.ndarray]:
+    def run_parallel_simulations(self, backend : str='multiprocessing',
+                                 **solve_ivp_kwargs) -> dict[np.ndarray]:
         """Parallel version of run_simulation.
+
+        Parameters
+        ----------
+        backend : str, optional
+            Parallelization backend to use, by default 'multiprocessing'.
+            Can also use 'loky' and 'threading'.
 
         Returns
         -------
@@ -191,11 +195,8 @@ class Simulation:
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
-        with parallel_backend('threading', n_jobs=self.n_proc):
+        with parallel_backend(backend, n_jobs=self.n_proc):
             results = Parallel()(delayed(evaluate_env)(arg) for arg in args)
-            # results = pool.map(evaluate_env, args)
-            # results = list(executor.map(evaluate_env, args))
-
 
         for i, met in enumerate(results):
             metrics['collision_steps'][i] = met[0]['collision_steps']
