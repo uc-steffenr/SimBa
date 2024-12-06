@@ -191,7 +191,7 @@ class Simulation:
 
         args = [(env, solve_ivp_kwargs) for env in self.envs]
 
-        with parallel_backend('loky', n_jobs=self.n_proc):
+        with parallel_backend('threading', n_jobs=self.n_proc):
             results = Parallel()(delayed(evaluate_env)(arg) for arg in args)
             # results = pool.map(evaluate_env, args)
             # results = list(executor.map(evaluate_env, args))
