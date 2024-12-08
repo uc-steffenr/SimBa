@@ -163,7 +163,7 @@ class Agent:
         else:
             readings = np.ones(self.num_sensors)*self.sensor_dist
 
-        self.collision_steps.append(np.any(readings < self._collision_thresh))
+        self.collision_steps.append(np.any(readings <= self._collision_thresh))
 
         target_heading = np.arctan((target[1] - X[2])/(target[0] - X[0]))
         self.heading_steps.append(np.abs(target_heading - X[4]) > \
