@@ -107,11 +107,11 @@ class Environment:
             xt_within_check = any([Xt.within(obst) for obst in \
                                    self.obstacles[:-1]])
             
-            agent_within_distance_check = all([X0.distance(obst) < \
+            agent_within_distance_check = any([X0.distance(obst) < \
                                                self.sep_factor*self.agent.r \
                                                for obst in self.obstacles])
             
-            xt_within_distance_check = all([Xt.distance(obst) < \
+            xt_within_distance_check = any([Xt.distance(obst) < \
                                             self.sep_factor*self.agent.r \
                                             for obst in self.obstacles])
 
