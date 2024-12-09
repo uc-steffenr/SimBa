@@ -64,7 +64,7 @@ class Agent:
 
         # internal variables used for controls and metrics
         self.controller = properties.get('controls', controls)
-        self._collision_thresh = properties.get('collision_thresh', 0.0000001)
+        self._collision_thresh = properties.get('collision_thresh', 0.01)
         self._heading_thresh = properties.get('heading_thresh', 0.01)
 
         # set up metrics
